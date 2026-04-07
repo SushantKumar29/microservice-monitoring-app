@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: worker-deploy
+  labels:
+    name: worker-deploy
+    app: monitoring-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: worker-pod
+      app: monitoring-app
+  template:
+    metadata:
+      name: worker-pod
+      labels:
+        name: worker-pod
+        app: monitoring-app
+    spec:
+      containers:
+        - name: worker-pod
+          image: job-worker
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 80
+          env:
+            - name: REDIS_HOST
+              value: "redis"
+            - name: REDIS_PORT
+              value: "6379"
+            - name: REDIS_URL
+              value: "redis://redis:6379"

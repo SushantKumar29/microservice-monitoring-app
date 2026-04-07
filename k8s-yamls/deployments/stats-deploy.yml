@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: stats-deploy
+  labels:
+    name: stats-deploy
+    app: monitoring-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: stats-pod
+      app: monitoring-app
+  template:
+    metadata:
+      name: stats-pod
+      labels:
+        name: stats-pod
+        app: monitoring-app
+    spec:
+      containers:
+        - name: stats-pod
+          image: job-stats
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 80
+          env:
+            - name: REDIS_HOST
+              value: "redis"
+            - name: REDIS_PORT
+              value: "6379"
+            - name: REDIS_URL
+              value: "redis://redis:6379"

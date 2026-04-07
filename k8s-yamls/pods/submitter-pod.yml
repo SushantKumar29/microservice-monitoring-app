@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: submitter-pod
+  labels:
+    name: submitter-pod
+    app: monitoring-app
+spec:
+  containers:
+    - name: submitter-pod
+      image: job-submitter
+      imagePullPolicy: Never
+      ports:
+        - containerPort: 80
+      env:
+        - name: REDIS_HOST
+          value: "redis"
+        - name: REDIS_PORT
+          value: "6379"
+        - name: REDIS_URL
+          value: "redis://redis:6379"

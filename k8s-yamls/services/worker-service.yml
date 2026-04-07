@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: worker-service
+  labels:
+    name: worker-service
+    app: monitoring-app
+spec:
+  type: NodePort
+  selector:
+    name: worker-pod
+    app: monitoring-app
+  ports:
+    - port: 80
+      targetPort: 3001
+      nodePort: 30002
