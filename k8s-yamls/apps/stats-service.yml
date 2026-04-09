@@ -3,14 +3,13 @@ kind: Service
 metadata:
   name: stats-service
   labels:
-    name: stats-service
-    app: monitoring-app
+    has-metrics: "true" # For Prometheus
 spec:
-  type: NodePort
+  type: ClusterIP
   selector:
-    name: stats-pod
     app: monitoring-app
+    component: stats
   ports:
     - port: 80
       targetPort: 3002
-      nodePort: 30003
+      name: http

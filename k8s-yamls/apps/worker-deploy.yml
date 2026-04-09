@@ -2,28 +2,28 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: worker-deploy
-  labels:
-    name: worker-deploy
-    app: monitoring-app
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
-      name: worker-pod
       app: monitoring-app
+      component: worker
   template:
     metadata:
-      name: worker-pod
       labels:
-        name: worker-pod
         app: monitoring-app
+        component: worker
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "3001"
+        prometheus.io/path: "/metrics"
     spec:
       containers:
-        - name: worker-pod
+        - name: worker
           image: job-worker
           imagePullPolicy: Never
           ports:
-            - containerPort: 80
+            - containerPort: 3001
           env:
             - name: REDIS_HOST
               value: "redis"
@@ -31,3 +31,12 @@ spec:
               value: "6379"
             - name: REDIS_URL
               value: "redis://redis:6379"
+            - name: PORT
+              value: "3001"
+          resources:
+            requests:
+              cpu: "200m"
+              memory: "256Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"

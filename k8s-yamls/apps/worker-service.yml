@@ -3,14 +3,13 @@ kind: Service
 metadata:
   name: worker-service
   labels:
-    name: worker-service
-    app: monitoring-app
+    has-metrics: "true" # For Prometheus
 spec:
-  type: NodePort
+  type: ClusterIP
   selector:
-    name: worker-pod
     app: monitoring-app
+    component: worker
   ports:
     - port: 80
       targetPort: 3001
-      nodePort: 30002
+      name: http

@@ -2,28 +2,28 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: stats-deploy
-  labels:
-    name: stats-deploy
-    app: monitoring-app
 spec:
   replicas: 1
   selector:
     matchLabels:
-      name: stats-pod
       app: monitoring-app
+      component: stats
   template:
     metadata:
-      name: stats-pod
       labels:
-        name: stats-pod
         app: monitoring-app
+        component: stats
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "3002"
+        prometheus.io/path: "/metrics"
     spec:
       containers:
-        - name: stats-pod
+        - name: stats
           image: job-stats
           imagePullPolicy: Never
           ports:
-            - containerPort: 80
+            - containerPort: 3002
           env:
             - name: REDIS_HOST
               value: "redis"
@@ -31,3 +31,5 @@ spec:
               value: "6379"
             - name: REDIS_URL
               value: "redis://redis:6379"
+            - name: PORT
+              value: "3002"
