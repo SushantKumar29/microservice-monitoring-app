@@ -7,7 +7,7 @@ metadata:
 spec:
   selector:
     matchLabels:
-      has-metrics: "true" # Finds services with this label
+      has-metrics: 'true' # Finds services with this label
   endpoints:
     - port: http
       path: /metrics

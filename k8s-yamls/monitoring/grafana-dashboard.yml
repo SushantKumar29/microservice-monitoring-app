@@ -3,7 +3,7 @@ kind: ConfigMap
 metadata:
   name: microservices-monitoring-dashboard
   labels:
-    grafana_dashboard: "1" # Auto load Grafana
+    grafana_dashboard: '1' # Auto load Grafana
     app: grafana
 data:
   job-metrics-dashboard.json: |
@@ -11,6 +11,28 @@ data:
       "title": "Microservices Monitoring Dashboard",
       "uid": "job-metrics-001",
       "panels": [
+        {
+          "title": "Total Jobs Submitted",
+          "type": "stat",
+          "gridPos": {"x": 0, "y": 0, "w": 6, "h": 4},
+          "targets": [
+            {
+              "expr": "total_jobs_submitted",
+              "legendFormat": "Submitted"
+            }
+          ]
+        },
+        {
+          "title": "Total Jobs Completed",
+          "type": "stat",
+          "gridPos": {"x": 6, "y": 0, "w": 6, "h": 4},
+          "targets": [
+            {
+              "expr": "total_jobs_completed",
+              "legendFormat": "Completed"
+            }
+          ]
+        },
         {
           "title": "Jobs Submitted Rate",
           "type": "graph",
@@ -43,6 +65,37 @@ data:
               "legendFormat": "Worker Count"
             }
           ]
+        },
+        {
+          "title": "Active Replicas",
+          "type": "stat",
+          "gridPos": {"x": 12, "y": 0, "w": 12, "h": 4},
+          "targets": [
+            {
+              "expr": "kube_deployment_status_replicas{deployment='worker-deploy'}",
+              "legendFormat": "Replicas Count"
+            }
+          ]
+        },
+        {
+          "title": "Worker Scaling Over Time",
+          "type": "graph",
+          "gridPos": {"x": 12, "y": 0, "w": 12, "h": 8},
+          "targets": [
+            {
+              "expr": "kube_deployment_status_replicas{deployment='worker-deploy'}",
+              "legendFormat": "Desired Replicas"
+            },
+            {
+              "expr": "kube_deployment_status_observed_generation{deployment='worker-deploy'}",
+              "legendFormat": "Available Replicas"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "short"
+            }
+          }
         },
         {
           "title": "CPU Usage by Worker",

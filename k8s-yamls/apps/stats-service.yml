@@ -3,7 +3,7 @@ kind: Service
 metadata:
   name: stats-service
   labels:
-    has-metrics: "true" # For Prometheus
+    has-metrics: 'true' # For Prometheus
 spec:
   type: ClusterIP
   selector:

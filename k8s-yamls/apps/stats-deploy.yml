@@ -14,9 +14,9 @@ spec:
         app: monitoring-app
         component: stats
       annotations:
-        prometheus.io/scrape: "true"
-        prometheus.io/port: "3002"
-        prometheus.io/path: "/metrics"
+        prometheus.io/scrape: 'true'
+        prometheus.io/port: '3002'
+        prometheus.io/path: '/metrics'
     spec:
       containers:
         - name: stats
@@ -26,10 +26,10 @@ spec:
             - containerPort: 3002
           env:
             - name: REDIS_HOST
-              value: "redis"
+              value: 'redis'
             - name: REDIS_PORT
-              value: "6379"
+              value: '6379'
             - name: REDIS_URL
-              value: "redis://redis:6379"
+              value: 'redis://redis:6379'
             - name: PORT
-              value: "3002"
+              value: '3002'

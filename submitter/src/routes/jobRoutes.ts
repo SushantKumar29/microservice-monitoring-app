@@ -1,11 +1,11 @@
-import { Router } from "express";
-import { submitJob, getJobStatus, health } from "../controllers/jobController";
+import { Router } from 'express';
+import { submitJob, getJobStatus, health } from '../controllers/jobController';
 
 const router = Router();
 
-router.get("/health", health);
+router.get('/health', health);
 
-router.post("/submit", submitJob);
-router.get("/status/:id", getJobStatus);
+router.post('/submit', submitJob);
+router.get('/status/:id', getJobStatus);
 
 export default router;
