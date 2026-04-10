@@ -1,0 +1,29 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: app-ingress
+spec:
+  rules:
+    - http:
+        paths:
+          - path: /submit
+            pathType: Prefix
+            backend:
+              service:
+                name: submitter-service
+                port:
+                  number: 80
+          - path: /status
+            pathType: Prefix
+            backend:
+              service:
+                name: submitter-service
+                port:
+                  number: 80
+          - path: /stats
+            pathType: Prefix
+            backend:
+              service:
+                name: stats-service
+                port:
+                  number: 80
