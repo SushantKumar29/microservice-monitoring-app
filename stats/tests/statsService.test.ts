@@ -8,7 +8,6 @@ import {
   pendingJobs,
 } from '../src/utils/metrics';
 
-// Mock dependencies
 jest.mock('@microservices/shared');
 jest.mock('../src/utils/metrics');
 

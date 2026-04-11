@@ -17,10 +17,8 @@ export const createLogger = (serviceName: string) => {
   });
 };
 
-// Default logger for shared module
 export const logger = createLogger('shared');
 
-// Add console transport for development
 if (process.env.NODE_ENV !== 'production') {
   logger.add(
     new winston.transports.Console({

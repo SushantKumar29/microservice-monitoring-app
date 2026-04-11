@@ -25,46 +25,59 @@ A Kubernetes-based microservices system that processes CPU-intensive jobs using 
 
 ```
 microservice-monitoring-app/
-├── submitter/                 # Service A - Job Submitter
-│   ├── src/
-│   │   ├── config/           # Redis config
-│   │   ├── controllers/      # API handlers
-│   │   ├── routes/           # Express routes
-│   │   ├── utils/            # Logger, metrics
-│   │   └── ...
-│   ├── tests/                # Unit tests
-│   └── package.json
-│
-├── worker/                    # Service B - Worker (Scalable)
-│   ├── src/
-│   │   ├── config/           # Redis config
-│   │   ├── controllers/      # Worker loop, job processing
-│   │   ├── routes/           # Stats endpoints
-│   │   ├── services/         # Prime calculator
-│   │   ├── utils/            # Logger, metrics
-│   │   └── ...
-│   ├── tests/                # Unit tests
-│   └── package.json
-│
-├── stats/                     # Service C - Stats Aggregator
-│   ├── src/
-│   │   ├── config/           # Redis config
-│   │   ├── controllers/      # API handlers
-│   │   ├── routes/           # Stats endpoints
-│   │   ├── services/         # Prime calculator
-│   │   ├── utils/            # Logger, metrics
-│   │   └── ...
-│   ├── tests/                # Unit tests
-│   └── package.json
-│
-├── k8s-yamls/                 # Kubernetes manifests
-│   ├── redis/             # Redis deployment & service
-│   ├── apps/              # App deployments & services
-│   ├── autoscaling/       # HPA configuration
-│   ├── ingress/           # Ingress rules
-│   └── monitoring/        # ServiceMonitor, Grafana dashboards
-│
-
+├── k8s-yamls/              # Kubernetes deployment files
+│   ├── apps/               # Service deployments (submitter, worker, stats)
+│   ├── autoscaling/        # HPA config for worker scaling
+│   ├── ingress/            # External access config
+│   ├── monitoring/         # Prometheus & Grafana configs
+│   └── redis/              # Redis deployment
+├── public/                 # Static assets
+│   └── assets/
+│       └── screenshots/    # Grafana dashboard screenshots
+├── shared/                 # Shared code used by all services
+│   ├── package.json
+│   ├── src/
+│   │   ├── config/         # Redis connection
+│   │   ├── constants/      # Shared constants (QUEUE_NAME, METRICS, etc.)
+│   │   ├── index.ts        # Main export file
+│   │   └── utils/          # Logger, helpers
+│   ├── tsconfig.base.json  # Base TypeScript config
+│   └── tsconfig.json
+├── stats/                  # Service C - Shows job stats & metrics
+│   ├── Dockerfile
+│   ├── package.json
+│   ├── src/
+│   │   ├── controllers/    # /stats, /health, /metrics endpoints
+│   │   ├── index.ts        # Entry point (port 3002)
+│   │   ├── routes/
+│   │   ├── services/       # Stats calculation logic
+│   │   ├── types.ts
+│   │   └── utils/          # Prometheus metrics
+│   ├── tests/
+│   └── tsconfig.json
+├── submitter/              # Service A - Receives job requests
+│   ├── Dockerfile
+│   ├── package.json
+│   ├── src/
+│   │   ├── controllers/    # /submit, /status/:id, /health
+│   │   ├── index.ts        # Entry point (port 3000)
+│   │   └── routes/
+│   ├── tests/
+│   └── tsconfig.json
+├── worker/                 # Service B - Processes jobs (scales with HPA)
+|   ├── Dockerfile
+|   ├── package.json
+|   ├── src/
+|   │   ├── controllers/    # Job processing loop, /health, /metrics
+|   │   ├── index.ts        # Entry point (port 3001)
+|   │   ├── routes/
+|   │   ├── services/       # CPU-intensive tasks (primes, hashing, sorting)
+|   │   ├── types.ts
+|   │   └── utils/          # Prometheus metrics
+|   ├── tests/
+|   └── tsconfig.json
+├── package.json            # Root workspace config
+├── package-lock.json
 └── README.md
 ```
 
@@ -91,7 +104,13 @@ minikube addons enable metrics-server
 install helm
 ```
 
-1. Build Docker Images
+1. Install packages
+
+```
+npm install
+```
+
+2. Build Docker Images
 
 ```
 # Build each service
@@ -107,14 +126,14 @@ minikube image load job-worker
 minikube image load job-stats
 ```
 
-2. Install Prometheus Stack
+3. Install Prometheus Stack
 
 ```
 helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
 helm install prometheus prometheus-community/kube-prometheus-stack
 ```
 
-3. Deploy Application
+4. Deploy Application
 
 ```
 # Deploy in order
@@ -130,7 +149,7 @@ kubectl get svc
 kubectl get hpa
 ```
 
-4. Access the application
+5. Access the application
 
 ```
 # Get the URL (Minikube)

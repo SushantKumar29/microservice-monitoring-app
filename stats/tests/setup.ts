@@ -3,7 +3,6 @@ config({ path: '.env.test', quiet: true });
 
 process.env.NODE_ENV = 'test';
 
-// Mock shared module
 jest.mock('@microservices/shared', () => ({
   createLogger: jest.fn(() => ({
     info: jest.fn(),

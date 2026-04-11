@@ -5,12 +5,10 @@ import { createLogger, QUEUE_NAME, WORKER_REPLICAS } from '@microservices/shared
 
 const logger = createLogger('stats');
 
-// Check stats health
 export const health = (req: Request, res: Response) => {
   res.json({ status: 'healthy', service: 'stats' });
 };
 
-// Get stats
 export const getStats = async (req: Request, res: Response) => {
   try {
     const stats = await getAllStats();

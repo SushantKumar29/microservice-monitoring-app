@@ -3,7 +3,6 @@ import express from 'express';
 import jobRoutes from '../src/routes/jobRoutes';
 import { redisClient } from '@microservices/shared';
 
-// Mock shared module
 jest.mock('@microservices/shared');
 
 const app = express();

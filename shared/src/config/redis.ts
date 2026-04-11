@@ -15,7 +15,6 @@ export const disconnectRedis = async () => {
   await redisClient.disconnect();
 };
 
-// Common Redis operations
 export const getCounter = async (counterName: string): Promise<number> => {
   const value = await redisClient.get(counterName);
   return value ? Number(value) : 0;
