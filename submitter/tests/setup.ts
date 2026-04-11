@@ -7,14 +7,13 @@ jest.mock('uuid', () => ({
   v4: jest.fn(() => 'fixed-uuid-123'),
 }));
 
-jest.mock('../src/utils/logger', () => ({
-  info: jest.fn(),
-  error: jest.fn(),
-  warn: jest.fn(),
-  debug: jest.fn(),
-}));
-
-jest.mock('../src/config/redis', () => ({
+jest.mock('@microservices/shared', () => ({
+  createLogger: jest.fn(() => ({
+    info: jest.fn(),
+    error: jest.fn(),
+    warn: jest.fn(),
+    debug: jest.fn(),
+  })),
   redisClient: {
     lPush: jest.fn().mockResolvedValue(1),
     setEx: jest.fn().mockResolvedValue('OK'),
@@ -22,4 +21,30 @@ jest.mock('../src/config/redis', () => ({
     get: jest.fn(),
   },
   connectRedis: jest.fn().mockResolvedValue(true),
+  QUEUE_NAME: 'job_queue',
+  JOB_TYPES: {
+    prime: 'prime',
+    hashing: 'hashing',
+    sort: 'sort',
+  },
+  JOB_STATUS: {
+    pending: 'pending',
+    processing: 'processing',
+    completed: 'completed',
+    failed: 'failed',
+  },
+  METRIC_CONFIGS: {
+    totalJobsSubmitted: {
+      name: 'total_jobs_submitted',
+      help: 'Total number of jobs submitted',
+    },
+    totalJobsCompleted: {
+      name: 'total_jobs_completed',
+      help: 'Total number of jobs completed',
+    },
+    totalJobsFailed: {
+      name: 'total_jobs_failed',
+      help: 'Total number of jobs failed',
+    },
+  },
 }));

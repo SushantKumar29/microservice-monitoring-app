@@ -10,12 +10,13 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "type-check": "npm run type-check --workspaces --if-present",
-    "build": "npm run build --workspaces --if-present",
+    "build": "npm run build:shared && npm run build --workspaces --if-present",
+    "build:shared": "npm run build --workspace=@microservices/shared",
     "clean": "npm run clean --workspaces --if-present",
     "dev:submitter": "npm run dev --workspace=submitter",
     "dev:worker": "npm run dev --workspace=worker",
     "dev:stats": "npm run dev --workspace=stats",
-    "dev:all": "concurrently \"npm run dev:submitter\" \"npm run dev:worker\" \"npm run dev:stats\"",
+    "dev": "concurrently \"npm run dev:submitter\" \"npm run dev:worker\" \"npm run dev:stats\"",
     "test": "npm run test:submitter && npm run test:worker && npm run test:stats",
     "test:submitter": "cd submitter && npm test",
     "test:worker": "cd worker && npm test",
@@ -24,6 +25,7 @@
     "test:watch": "npm run test -- --watch"
   },
   "workspaces": [
+    "shared",
     "submitter",
     "worker",
     "stats"

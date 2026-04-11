@@ -4,7 +4,6 @@ import statsRoutes from '../src/routes/statsRoutes';
 import { getAllStats } from '../src/services/statsService';
 import { register } from '../src/utils/metrics';
 
-// Mock the service
 jest.mock('../src/services/statsService');
 jest.mock('../src/utils/metrics');
 
@@ -50,8 +49,8 @@ describe('Stats API Routes', () => {
       });
       expect(response.body).toHaveProperty('timestamp');
       expect(response.body).toHaveProperty('services');
-      expect(response.body.services).toHaveProperty('worker_replicas');
-      expect(response.body.services).toHaveProperty('queue_name');
+      expect(response.body.services).toHaveProperty('worker_replicas', '1');
+      expect(response.body.services).toHaveProperty('queue_name', 'job_queue');
     });
 
     it('should handle errors gracefully', async () => {

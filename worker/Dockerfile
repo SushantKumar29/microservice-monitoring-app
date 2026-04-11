@@ -1,23 +1,38 @@
-FROM node:18-alpine
+# FROM node:18-alpine
 
-RUN apk add --no-cache curl
+# RUN apk add --no-cache curl
+
+# WORKDIR /app
+
+# # Copy package files
+# COPY package*.json ./
+
+# # Install dependencies
+# RUN npm install 
+
+# # Copy source code
+# COPY . .
+
+# # Build TypeScript
+# RUN npm run build
+
+# # Expose port
+# EXPOSE 3001
+
+# # Start in development mode
+# CMD ["npm", "run", "dev"]
+
+FROM node:18-alpine
 
 WORKDIR /app
 
-# Copy package files
-COPY package*.json ./
+COPY shared ./shared
+COPY worker ./worker
 
-# Install dependencies
-RUN npm install 
-
-# Copy source code
-COPY . .
-
-# Build TypeScript
+WORKDIR /app/worker
+RUN npm install
 RUN npm run build
 
-# Expose port
 EXPOSE 3001
 
-# Start in development mode
 CMD ["npm", "run", "dev"]

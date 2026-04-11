@@ -1,8 +1,9 @@
 import { Request, Response } from 'express';
 import { register } from '../utils/metrics';
 import { getAllStats, updateMetrics } from '../services/statsService';
-import { QUEUE_NAME, WORKER_REPLICAS } from '../constants';
-import logger from '../utils/logger';
+import { createLogger, QUEUE_NAME, WORKER_REPLICAS } from '@microservices/shared';
+
+const logger = createLogger('stats');
 
 // Check stats health
 export const health = (req: Request, res: Response) => {
