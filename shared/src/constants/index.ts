@@ -13,16 +13,14 @@ export const WORKER_REPLICAS = '1';
 
 export const JOB_TYPES = {
   prime: 'prime',
-  hashing: 'hashing',
-  sort: 'sort',
-} as const;
+};
 
 export const JOB_STATUS = {
   pending: 'pending',
   processing: 'processing',
   completed: 'completed',
   failed: 'failed',
-} as const;
+};
 
 export type JobType = keyof typeof JOB_TYPES;
 export type JobStatus = keyof typeof JOB_STATUS;

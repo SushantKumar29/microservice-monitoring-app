@@ -104,20 +104,27 @@ minikube addons enable metrics-server
 install helm
 ```
 
-1. Install packages
+1. Clone Repo
+
+```
+git clone https://github.com/SushantKumar29/microservice-monitoring-app.git
+```
+
+2. Install packages
 
 ```
 npm install
 ```
 
-2. Build Docker Images
+3. Build Docker Images
 
 ```
-# Build each service
+# Build each service (from root) and load to minikube
+cd path/microservice-monitoring-app
 
-cd submitter && docker build -t job-submitter . && cd ..
-cd worker && docker build -t job-worker . && cd ..
-cd stats && docker build -t job-stats . && cd ..
+docker build -f worker/Dockerfile -t job-worker .
+docker build -f submitter/Dockerfile -t job-submitter .
+docker build -f stats/Dockerfile -t job-stats .
 
 # Load into Minikube
 
@@ -126,14 +133,14 @@ minikube image load job-worker
 minikube image load job-stats
 ```
 
-3. Install Prometheus Stack
+4. Install Prometheus Stack
 
 ```
 helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
 helm install prometheus prometheus-community/kube-prometheus-stack
 ```
 
-4. Deploy Application
+5. Deploy Application
 
 ```
 # Deploy in order
@@ -149,7 +156,7 @@ kubectl get svc
 kubectl get hpa
 ```
 
-5. Access the application
+6. Access the application
 
 ```
 # Get the URL (Minikube)
@@ -207,9 +214,17 @@ ab -n 5000 -c 200 -p data.json -T application/json http://<submitter-url>/submit
 ## Monitoring with Grafana
 
 ```
+# Run Prometheus
+kubectl port-forward svc/prometheus-kube-prometheus-prometheus 9090:9090
+
+# Run Grafana
 kubectl port-forward svc/prometheus-grafana 3000:80
+
 # Open: http://localhost:3000
-# Login: admin / admin
+
+Login Grafana (admin / get password): kubectl get secret prometheus-grafana -o jsonpath="{.data.admin-password}" | base64 -d
+OR
+Use default login credentials (admin / admin)
 ```
 
 ## Screenshots

@@ -7,7 +7,7 @@ export const METRICS = {
   queueLength: 'queue_length',
   pendingJobs: 'pending_jobs',
   activeJobs: 'active_jobs',
-} as const;
+};
 
 export const METRIC_CONFIGS = {
   totalJobsSubmitted: {
@@ -42,4 +42,4 @@ export const METRIC_CONFIGS = {
     name: METRICS.activeJobs,
     help: 'Number of jobs currently being processed',
   },
-} as const;
+};

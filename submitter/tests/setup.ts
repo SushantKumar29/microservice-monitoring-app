@@ -24,8 +24,6 @@ jest.mock('@microservices/shared', () => ({
   QUEUE_NAME: 'job_queue',
   JOB_TYPES: {
     prime: 'prime',
-    hashing: 'hashing',
-    sort: 'sort',
   },
   JOB_STATUS: {
     pending: 'pending',
