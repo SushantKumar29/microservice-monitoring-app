@@ -1,6 +1,5 @@
 import { Request, Response } from 'express';
 import { register } from '../utils/metrics';
-import { popFromQueue, getQueueLength, storeJobResult, incrementCounter } from '../config/redis';
 import { calculatePrimes } from '../services/primeCalculator';
 import {
   totalJobsCompleted,
@@ -9,8 +8,20 @@ import {
   activeJobs,
   queueLength,
 } from '../utils/metrics';
-import { JOB_METRICS, JOB_STATUS, PRIME_LIMIT, QUEUE_NAME, WORKER_ID } from '../constants';
-import logger from '../utils/logger';
+import {
+  storeJobResult,
+  incrementCounter,
+  getQueueLength,
+  popFromQueue,
+  WORKER_ID,
+  PRIME_LIMIT,
+  JOB_STATUS,
+  METRIC_CONFIGS,
+  QUEUE_NAME,
+} from '@microservices/shared';
+
+import { createLogger } from '@microservices/shared';
+const logger = createLogger('worker');
 
 let isProcessing = true;
 
@@ -50,7 +61,7 @@ export const processJob = async (jobId: string) => {
 
     totalJobsCompleted.inc();
     jobProcessingDuration.observe(processingTimeSeconds);
-    await incrementCounter(JOB_METRICS.totalJobsCompleted.name);
+    await incrementCounter(METRIC_CONFIGS.totalJobsCompleted.name);
 
     logger.info(
       `[${WORKER_ID}] Completed job: ${jobId} in ${result?.executionTimeMs}ms (${result.count} primes)`
@@ -67,7 +78,7 @@ export const processJob = async (jobId: string) => {
     });
 
     totalJobErrors.inc();
-    await incrementCounter(JOB_METRICS.totalJobsFailed.name);
+    await incrementCounter(METRIC_CONFIGS.totalJobsFailed.name);
   } finally {
     activeJobs.dec();
   }

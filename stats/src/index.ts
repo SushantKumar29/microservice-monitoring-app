@@ -1,28 +1,23 @@
 import express from 'express';
-import statsRoutes from './routes/statsRoutes';
-import { connectRedis, disconnectRedis } from './config/redis';
-import { updateMetrics } from './services/statsService';
-
+import statsRoutes from './routes/statsRoutes.js';
+import { connectRedis, disconnectRedis, createLogger } from '@microservices/shared';
+import { updateMetrics } from './services/statsService.js';
 import dotenv from 'dotenv';
-import logger from './utils/logger';
 
 dotenv.config();
 
+const logger = createLogger('stats');
 const app = express();
 const PORT = process.env.PORT || 3002;
 
 app.use('/', statsRoutes);
 
-// Update metrics periodically
 let metricsInterval: NodeJS.Timeout;
 
 const startServer = async () => {
   try {
     await connectRedis();
-
-    // Update metrics every 5 seconds
     metricsInterval = setInterval(updateMetrics, 5000);
-
     app.listen(PORT, () => {
       logger.info(`✅ Stats service running on port ${PORT}`);
     });
@@ -32,7 +27,6 @@ const startServer = async () => {
   }
 };
 
-// Graceful shutdown
 process.on('SIGTERM', async () => {
   logger.info('SIGTERM received, shutting down...');
   clearInterval(metricsInterval);

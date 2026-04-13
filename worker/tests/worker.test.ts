@@ -1,15 +1,11 @@
 import request from 'supertest';
 import express from 'express';
 import { processJob } from '../src/controllers/workerController';
-import { storeJobResult, incrementCounter } from '../src/config/redis';
+import { storeJobResult, incrementCounter } from '@microservices/shared';
 import { calculatePrimes } from '../src/services/primeCalculator';
 
-jest.mock('../src/config/redis');
+jest.mock('@microservices/shared');
 jest.mock('../src/services/primeCalculator');
-jest.mock('../src/utils/logger', () => ({
-  info: jest.fn(),
-  error: jest.fn(),
-}));
 
 import workerRoutes from '../src/routes/workerRoutes';
 

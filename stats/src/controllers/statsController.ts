@@ -1,15 +1,14 @@
 import { Request, Response } from 'express';
 import { register } from '../utils/metrics';
 import { getAllStats, updateMetrics } from '../services/statsService';
-import { QUEUE_NAME, WORKER_REPLICAS } from '../constants';
-import logger from '../utils/logger';
+import { createLogger, QUEUE_NAME, WORKER_REPLICAS } from '@microservices/shared';
 
-// Check stats health
+const logger = createLogger('stats');
+
 export const health = (req: Request, res: Response) => {
   res.json({ status: 'healthy', service: 'stats' });
 };
 
-// Get stats
 export const getStats = async (req: Request, res: Response) => {
   try {
     const stats = await getAllStats();

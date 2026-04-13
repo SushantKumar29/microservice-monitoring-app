@@ -1,7 +1,9 @@
 import request from 'supertest';
 import express from 'express';
 import jobRoutes from '../src/routes/jobRoutes';
-import { redisClient } from '../src/config/redis';
+import { redisClient } from '@microservices/shared';
+
+jest.mock('@microservices/shared');
 
 const app = express();
 app.use(express.json());
@@ -27,7 +29,7 @@ describe('Submitter Service', () => {
     it('should submit a job successfully', async () => {
       const response = await request(app).post('/submit').expect(202);
 
-      expect(response.body).toHaveProperty('jobId');
+      expect(response.body).toHaveProperty('jobId', 'fixed-uuid-123');
       expect(response.body.status).toBe('pending');
       expect(response.body.message).toBe('Job submitted successfully');
       expect(redisClient.lPush).toHaveBeenCalledTimes(1);

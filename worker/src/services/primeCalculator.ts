@@ -1,4 +1,4 @@
-import { PRIME_LIMIT } from '../constants';
+import { PRIME_LIMIT } from '@microservices/shared';
 import { PrimeResult } from '../types';
 
 const isPrimeNumber = (num: number): boolean => {

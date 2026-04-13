@@ -27,6 +27,9 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Build Workspaces
+        run: npm run build
+
       - name: Security Audit
         run: npm audit --audit-level=high || true
 
@@ -38,6 +41,3 @@ jobs:
 
       - name: Run Tests
         run: npm run test
-
-      - name: Build (if needed)
-        run: npm run build

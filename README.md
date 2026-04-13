@@ -25,46 +25,59 @@ A Kubernetes-based microservices system that processes CPU-intensive jobs using 
 
 ```
 microservice-monitoring-app/
-├── submitter/                 # Service A - Job Submitter
-│   ├── src/
-│   │   ├── config/           # Redis config
-│   │   ├── controllers/      # API handlers
-│   │   ├── routes/           # Express routes
-│   │   ├── utils/            # Logger, metrics
-│   │   └── ...
-│   ├── tests/                # Unit tests
-│   └── package.json
-│
-├── worker/                    # Service B - Worker (Scalable)
-│   ├── src/
-│   │   ├── config/           # Redis config
-│   │   ├── controllers/      # Worker loop, job processing
-│   │   ├── routes/           # Stats endpoints
-│   │   ├── services/         # Prime calculator
-│   │   ├── utils/            # Logger, metrics
-│   │   └── ...
-│   ├── tests/                # Unit tests
-│   └── package.json
-│
-├── stats/                     # Service C - Stats Aggregator
-│   ├── src/
-│   │   ├── config/           # Redis config
-│   │   ├── controllers/      # API handlers
-│   │   ├── routes/           # Stats endpoints
-│   │   ├── services/         # Prime calculator
-│   │   ├── utils/            # Logger, metrics
-│   │   └── ...
-│   ├── tests/                # Unit tests
-│   └── package.json
-│
-├── k8s-yamls/                 # Kubernetes manifests
-│   ├── redis/             # Redis deployment & service
-│   ├── apps/              # App deployments & services
-│   ├── autoscaling/       # HPA configuration
-│   ├── ingress/           # Ingress rules
-│   └── monitoring/        # ServiceMonitor, Grafana dashboards
-│
-
+├── k8s-yamls/              # Kubernetes deployment files
+│   ├── apps/               # Service deployments (submitter, worker, stats)
+│   ├── autoscaling/        # HPA config for worker scaling
+│   ├── ingress/            # External access config
+│   ├── monitoring/         # Prometheus & Grafana configs
+│   └── redis/              # Redis deployment
+├── public/                 # Static assets
+│   └── assets/
+│       └── screenshots/    # Grafana dashboard screenshots
+├── shared/                 # Shared code used by all services
+│   ├── package.json
+│   ├── src/
+│   │   ├── config/         # Redis connection
+│   │   ├── constants/      # Shared constants (QUEUE_NAME, METRICS, etc.)
+│   │   ├── index.ts        # Main export file
+│   │   └── utils/          # Logger, helpers
+│   ├── tsconfig.base.json  # Base TypeScript config
+│   └── tsconfig.json
+├── stats/                  # Service C - Shows job stats & metrics
+│   ├── Dockerfile
+│   ├── package.json
+│   ├── src/
+│   │   ├── controllers/    # /stats, /health, /metrics endpoints
+│   │   ├── index.ts        # Entry point (port 3002)
+│   │   ├── routes/
+│   │   ├── services/       # Stats calculation logic
+│   │   ├── types.ts
+│   │   └── utils/          # Prometheus metrics
+│   ├── tests/
+│   └── tsconfig.json
+├── submitter/              # Service A - Receives job requests
+│   ├── Dockerfile
+│   ├── package.json
+│   ├── src/
+│   │   ├── controllers/    # /submit, /status/:id, /health
+│   │   ├── index.ts        # Entry point (port 3000)
+│   │   └── routes/
+│   ├── tests/
+│   └── tsconfig.json
+├── worker/                 # Service B - Processes jobs (scales with HPA)
+|   ├── Dockerfile
+|   ├── package.json
+|   ├── src/
+|   │   ├── controllers/    # Job processing loop, /health, /metrics
+|   │   ├── index.ts        # Entry point (port 3001)
+|   │   ├── routes/
+|   │   ├── services/       # CPU-intensive tasks (primes, hashing, sorting)
+|   │   ├── types.ts
+|   │   └── utils/          # Prometheus metrics
+|   ├── tests/
+|   └── tsconfig.json
+├── package.json            # Root workspace config
+├── package-lock.json
 └── README.md
 ```
 
@@ -91,14 +104,35 @@ minikube addons enable metrics-server
 install helm
 ```
 
-1. Build Docker Images
+1. Clone Repo
 
 ```
-# Build each service
+git clone https://github.com/SushantKumar29/microservice-monitoring-app.git
+```
 
-cd submitter && docker build -t job-submitter . && cd ..
-cd worker && docker build -t job-worker . && cd ..
-cd stats && docker build -t job-stats . && cd ..
+2. Install packages
+
+```
+npm install
+```
+
+3. Add .env files
+
+```
+cd ../submitter && cp .env.example .env
+cd ../worker && cp .env.example .env
+cd ../stats && cp .env.example .env
+```
+
+4. Build Docker Images
+
+```
+# Build each service (from root) and load to minikube
+cd path/microservice-monitoring-app
+
+docker build -f worker/Dockerfile -t job-worker .
+docker build -f submitter/Dockerfile -t job-submitter .
+docker build -f stats/Dockerfile -t job-stats .
 
 # Load into Minikube
 
@@ -107,14 +141,14 @@ minikube image load job-worker
 minikube image load job-stats
 ```
 
-2. Install Prometheus Stack
+5. Install Prometheus Stack
 
 ```
 helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
 helm install prometheus prometheus-community/kube-prometheus-stack
 ```
 
-3. Deploy Application
+6. Deploy Application
 
 ```
 # Deploy in order
@@ -130,7 +164,7 @@ kubectl get svc
 kubectl get hpa
 ```
 
-4. Access the application
+7. Access the application
 
 ```
 # Get the URL (Minikube)
@@ -188,9 +222,17 @@ ab -n 5000 -c 200 -p data.json -T application/json http://<submitter-url>/submit
 ## Monitoring with Grafana
 
 ```
+# Run Prometheus
+kubectl port-forward svc/prometheus-kube-prometheus-prometheus 9090:9090
+
+# Run Grafana
 kubectl port-forward svc/prometheus-grafana 3000:80
+
 # Open: http://localhost:3000
-# Login: admin / admin
+
+Login Grafana (admin / get password): kubectl get secret prometheus-grafana -o jsonpath="{.data.admin-password}" | base64 -d
+OR
+Use default login credentials (admin / admin)
 ```
 
 ## Screenshots

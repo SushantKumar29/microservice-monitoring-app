@@ -3,11 +3,22 @@ config({ path: '.env.test', quiet: true });
 
 process.env.NODE_ENV = 'test';
 
-jest.mock('../src/utils/logger', () => ({
-  info: jest.fn(),
-  error: jest.fn(),
-  warn: jest.fn(),
-  debug: jest.fn(),
+jest.mock('@microservices/shared', () => ({
+  createLogger: jest.fn(() => ({
+    info: jest.fn(),
+    error: jest.fn(),
+    warn: jest.fn(),
+    debug: jest.fn(),
+  })),
+  getCounter: jest.fn(),
+  getQueueLength: jest.fn(),
+  QUEUE_NAME: 'job_queue',
+  WORKER_REPLICAS: '1',
+  METRIC_CONFIGS: {
+    totalJobsSubmitted: { name: 'total_jobs_submitted' },
+    totalJobsCompleted: { name: 'total_jobs_completed' },
+    totalJobsFailed: { name: 'total_jobs_failed' },
+  },
 }));
 
 jest.mock('../src/utils/metrics', () => ({
@@ -20,11 +31,4 @@ jest.mock('../src/utils/metrics', () => ({
   totalJobsFailed: { set: jest.fn() },
   queueLength: { set: jest.fn() },
   pendingJobs: { set: jest.fn() },
-}));
-
-jest.mock('../src/config/redis', () => ({
-  connectRedis: jest.fn().mockResolvedValue(true),
-  disconnectRedis: jest.fn().mockResolvedValue(true),
-  getCounter: jest.fn(),
-  getQueueLength: jest.fn(),
 }));

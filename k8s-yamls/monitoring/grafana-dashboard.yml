@@ -12,134 +12,95 @@ data:
       "uid": "job-metrics-001",
       "panels": [
         {
-          "title": "Total Jobs Submitted",
+          "title": "Total Jobs Submitted (All Services)",
           "type": "stat",
           "gridPos": {"x": 0, "y": 0, "w": 6, "h": 4},
           "targets": [
-            {
-              "expr": "total_jobs_submitted",
-              "legendFormat": "Submitted"
-            }
+            {"expr": "sum(total_jobs_submitted)", "legendFormat": "Total"}
           ]
         },
         {
-          "title": "Total Jobs Completed",
+          "title": "Total Jobs Completed (All Services)", 
           "type": "stat",
           "gridPos": {"x": 6, "y": 0, "w": 6, "h": 4},
           "targets": [
-            {
-              "expr": "total_jobs_completed",
-              "legendFormat": "Completed"
-            }
-          ]
-        },
-        {
-          "title": "Jobs Submitted Rate",
-          "type": "graph",
-          "gridPos": {"x": 0, "y": 0, "w": 12, "h": 8},
-          "targets": [
-            {
-              "expr": "rate(total_jobs_submitted[1m])",
-              "legendFormat": "Jobs/sec"
-            }
-          ]
-        },
-        {
-          "title": "Jobs Processed Rate",
-          "type": "graph",
-          "gridPos": {"x": 0, "y": 0, "w": 12, "h": 8},
-          "targets": [
-            {
-              "expr": "rate(total_jobs_completed[1m])",
-              "legendFormat": "Jobs/sec"
-            }
+            {"expr": "sum(total_jobs_completed)", "legendFormat": "Total"}
           ]
         },
         {
           "title": "Active Workers",
           "type": "stat",
-          "gridPos": {"x": 12, "y": 0, "w": 12, "h": 4},
+          "gridPos": {"x": 12, "y": 0, "w": 6, "h": 4},
           "targets": [
-            {
-              "expr": "count(kube_deployment_status_replicas{deployment='worker-deploy'})",
-              "legendFormat": "Worker Count"
-            }
+            {"expr": "count(kube_deployment_status_replicas{deployment='worker-deploy'})"}
           ]
         },
         {
-          "title": "Active Replicas",
+          "title": "Worker Replicas",
           "type": "stat",
-          "gridPos": {"x": 12, "y": 0, "w": 12, "h": 4},
+          "gridPos": {"x": 18, "y": 0, "w": 6, "h": 4},
           "targets": [
-            {
-              "expr": "kube_deployment_status_replicas{deployment='worker-deploy'}",
-              "legendFormat": "Replicas Count"
-            }
+            {"expr": "kube_deployment_status_replicas{deployment='worker-deploy'}"}
           ]
         },
         {
-          "title": "Worker Scaling Over Time",
-          "type": "graph",
-          "gridPos": {"x": 12, "y": 0, "w": 12, "h": 8},
+          "title": "Jobs Submitted Rate (Worker)",
+          "type": "timeseries",
+          "gridPos": {"x": 0, "y": 4, "w": 12, "h": 8},
           "targets": [
-            {
-              "expr": "kube_deployment_status_replicas{deployment='worker-deploy'}",
-              "legendFormat": "Desired Replicas"
-            },
-            {
-              "expr": "kube_deployment_status_observed_generation{deployment='worker-deploy'}",
-              "legendFormat": "Available Replicas"
-            }
-          ],
-          "fieldConfig": {
-            "defaults": {
-              "unit": "short"
-            }
-          }
-        },
-        {
-          "title": "CPU Usage by Worker",
-          "type": "graph",
-          "gridPos": {"x": 0, "y": 8, "w": 12, "h": 8},
-          "targets": [
-            {
-              "expr": "sum(rate(container_cpu_usage_seconds_total{pod=~'worker-deploy-.*'}[1m])) by (pod)",
-              "legendFormat": "{{pod}}"
-            }
+            {"expr": "rate(total_jobs_submitted[1m])", "legendFormat": "Worker"}
           ]
         },
         {
-          "title": "Job Processing Duration (95th percentile)",
-          "type": "graph",
-          "gridPos": {"x": 12, "y": 8, "w": 12, "h": 8},
+          "title": "Jobs Completed Rate",
+          "type": "timeseries",
+          "gridPos": {"x": 12, "y": 4, "w": 12, "h": 8},
           "targets": [
-            {
-              "expr": "histogram_quantile(0.95, rate(job_processing_time_seconds_bucket[5m]))",
-              "legendFormat": "P95 Duration"
-            }
+            {"expr": "rate(total_jobs_completed[1m])", "legendFormat": "Jobs/sec"}
+          ]
+        },
+        {
+          "title": "CPU Usage by Worker Pods",
+          "type": "timeseries",
+          "gridPos": {"x": 0, "y": 12, "w": 12, "h": 8},
+          "targets": [
+            {"expr": "sum(rate(container_cpu_usage_seconds_total[1m])) by (pod)", "legendFormat": "{{pod}}"}
+          ]
+        },
+        {
+          "title": "Failed Jobs (Stats Service)",
+          "type": "timeseries",
+          "gridPos": {"x": 12, "y": 12, "w": 12, "h": 8},
+          "targets": [
+            {"expr": "total_jobs_failed", "legendFormat": "Failed Jobs"}
           ]
         },
         {
           "title": "Queue Length",
-          "type": "graph",
-          "gridPos": {"x": 0, "y": 16, "w": 12, "h": 8},
+          "type": "timeseries",
+          "gridPos": {"x": 0, "y": 20, "w": 12, "h": 8},
           "targets": [
-            {
-              "expr": "queue_length",
-              "legendFormat": "Jobs Waiting"
-            }
+            {"expr": "queue_length", "legendFormat": "Queue Length"}
           ]
         },
         {
-          "title": "Errors Rate",
-          "type": "graph",
-          "gridPos": {"x": 12, "y": 16, "w": 12, "h": 8},
+          "title": "Worker Scaling",
+          "type": "timeseries",
+          "gridPos": {"x": 12, "y": 20, "w": 12, "h": 8},
           "targets": [
-            {
-              "expr": "rate(total_job_errors[1m])",
-              "legendFormat": "Errors/sec"
-            }
+            {"expr": "kube_deployment_status_replicas{deployment='worker-deploy'}", "legendFormat": "Desired"},
+            {"expr": "kube_deployment_status_available_replicas{deployment='worker-deploy'}", "legendFormat": "Available"}
+          ]
+        },
+        {
+          "title": "Jobs Summary by Service",
+          "type": "table",
+          "gridPos": {"x": 0, "y": 28, "w": 24, "h": 8},
+          "targets": [
+            {"expr": "sum by (instance) (total_jobs_completed)", "legendFormat": "{{instance}}"}
           ]
         }
-      ]
+      ],
+      "time": {"from": "now-1h", "to": "now"},
+      "refresh": "30s"
     }

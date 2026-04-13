@@ -1,35 +1,35 @@
 import client from 'prom-client';
-import { JOB_METRICS } from '../constants';
+import { METRIC_CONFIGS } from '@microservices/shared';
 
 export const register = new client.Registry();
 client.collectDefaultMetrics({ register });
 
 export const totalJobsSubmitted = new client.Gauge({
-  name: JOB_METRICS.totalJobsSubmitted.name,
-  help: JOB_METRICS.totalJobsSubmitted.help,
+  name: METRIC_CONFIGS.totalJobsSubmitted.name,
+  help: METRIC_CONFIGS.totalJobsSubmitted.help,
   registers: [register],
 });
 
 export const totalJobsCompleted = new client.Gauge({
-  name: JOB_METRICS.totalJobsCompleted.name,
-  help: JOB_METRICS.totalJobsCompleted.help,
+  name: METRIC_CONFIGS.totalJobsCompleted.name,
+  help: METRIC_CONFIGS.totalJobsCompleted.help,
   registers: [register],
 });
 
 export const totalJobsFailed = new client.Gauge({
-  name: JOB_METRICS.totalJobsFailed.name,
-  help: JOB_METRICS.totalJobsFailed.help,
+  name: METRIC_CONFIGS.totalJobsFailed.name,
+  help: METRIC_CONFIGS.totalJobsFailed.help,
   registers: [register],
 });
 
 export const queueLength = new client.Gauge({
-  name: JOB_METRICS.queueLength.name,
-  help: JOB_METRICS.queueLength.help,
+  name: METRIC_CONFIGS.queueLength.name,
+  help: METRIC_CONFIGS.queueLength.help,
   registers: [register],
 });
 
 export const pendingJobs = new client.Gauge({
-  name: JOB_METRICS.pendingJobs.name,
-  help: JOB_METRICS.pendingJobs.help,
+  name: METRIC_CONFIGS.pendingJobs.name,
+  help: METRIC_CONFIGS.pendingJobs.help,
   registers: [register],
 });

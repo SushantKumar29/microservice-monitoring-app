@@ -1,8 +1,15 @@
 import { Request, Response } from 'express';
 import { v4 as uuidv4 } from 'uuid';
-import { redisClient } from '../config/redis';
-import { JOB_METRICS, JOB_STATUS, JOB_TYPES, QUEUE_NAME } from '../constants';
-import logger from '../utils/logger';
+import {
+  createLogger,
+  JOB_STATUS,
+  JOB_TYPES,
+  METRIC_CONFIGS,
+  QUEUE_NAME,
+  redisClient,
+} from '@microservices/shared';
+
+const logger = createLogger('submitter');
 
 // Check submitter health
 export const health = (req: Request, res: Response) => {
@@ -30,7 +37,7 @@ export const submitJob = async (req: Request, res: Response) => {
     );
 
     // Increment counter for stats
-    await redisClient.incr(JOB_METRICS.totalJobsSubmitted.name);
+    await redisClient.incr(METRIC_CONFIGS.totalJobsSubmitted.name);
 
     logger.info(`Job submitted: ${jobId}`);
 

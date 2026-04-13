@@ -1,20 +1,21 @@
-import { getCounter, getQueueLength } from '../config/redis';
-import { JOB_METRICS, QUEUE_NAME } from '../constants';
+import { getCounter, getQueueLength, METRIC_CONFIGS, QUEUE_NAME } from '@microservices/shared';
 import { StatsResponse } from '../types';
-import logger from '../utils/logger';
 import {
-  totalJobsSubmitted,
+  pendingJobs,
+  queueLength,
   totalJobsCompleted,
   totalJobsFailed,
-  queueLength,
-  pendingJobs,
+  totalJobsSubmitted,
 } from '../utils/metrics';
+
+import { createLogger } from '@microservices/shared';
+const logger = createLogger('stats');
 
 export const getAllStats = async (): Promise<Omit<StatsResponse, 'timestamp' | 'services'>> => {
   const [submitted, completed, failed, queueLength] = await Promise.all([
-    getCounter(JOB_METRICS.totalJobsSubmitted.name),
-    getCounter(JOB_METRICS.totalJobsCompleted.name),
-    getCounter(JOB_METRICS.totalJobsFailed.name),
+    getCounter(METRIC_CONFIGS.totalJobsSubmitted.name),
+    getCounter(METRIC_CONFIGS.totalJobsCompleted.name),
+    getCounter(METRIC_CONFIGS.totalJobsFailed.name),
     getQueueLength(QUEUE_NAME),
   ]);
 
