@@ -116,7 +116,15 @@ git clone https://github.com/SushantKumar29/microservice-monitoring-app.git
 npm install
 ```
 
-3. Build Docker Images
+3. Add .env files
+
+```
+cd ../submitter && cp .env.example .env
+cd ../worker && cp .env.example .env
+cd ../stats && cp .env.example .env
+```
+
+4. Build Docker Images
 
 ```
 # Build each service (from root) and load to minikube
@@ -133,14 +141,14 @@ minikube image load job-worker
 minikube image load job-stats
 ```
 
-4. Install Prometheus Stack
+5. Install Prometheus Stack
 
 ```
 helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
 helm install prometheus prometheus-community/kube-prometheus-stack
 ```
 
-5. Deploy Application
+6. Deploy Application
 
 ```
 # Deploy in order
@@ -156,7 +164,7 @@ kubectl get svc
 kubectl get hpa
 ```
 
-6. Access the application
+7. Access the application
 
 ```
 # Get the URL (Minikube)
