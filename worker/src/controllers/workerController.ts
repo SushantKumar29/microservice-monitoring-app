@@ -1,13 +1,7 @@
 import { Request, Response } from 'express';
 import { register } from '../utils/metrics';
 import { calculatePrimes } from '../services/primeCalculator';
-import {
-  totalJobsCompleted,
-  totalJobErrors,
-  jobProcessingDuration,
-  activeJobs,
-  queueLength,
-} from '../utils/metrics';
+import { totalJobErrors, jobProcessingDuration, activeJobs, queueLength } from '../utils/metrics';
 import {
   storeJobResult,
   incrementCounter,
@@ -59,7 +53,6 @@ export const processJob = async (jobId: string) => {
       completedAt: Date.now(),
     });
 
-    totalJobsCompleted.inc();
     jobProcessingDuration.observe(processingTimeSeconds);
     await incrementCounter(METRIC_CONFIGS.totalJobsCompleted.name);
 
